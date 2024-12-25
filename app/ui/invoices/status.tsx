@@ -2,9 +2,7 @@
 
 import { updateInvoiceStatus } from '@/app/lib/actions';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { Select, SelectContent, SelectItem, SelectValue } from '@/components/ui/select';
 import { CheckIcon, ClockIcon, XCircleIcon } from '@heroicons/react/24/outline';
-import { SelectTrigger } from '@radix-ui/react-select';
 import clsx from 'clsx';
 import { useCallback } from 'react';
 
@@ -16,7 +14,6 @@ const statusToIcon  = {
   overdue: <ClockIcon className="w-4" />,
   canceled: <XCircleIcon className="w-4" />,
 };
-
 
 export default function InvoiceStatus({ id, status }: { id: string, status: string }) {
   const statusesToDisplay = availableStatuses.filter((availableStatus) => {

@@ -1,16 +1,17 @@
-import { fetchInvoicesPages } from '@/app/lib/data';
-import { lusitana } from '@/app/ui/fonts';
-import { CreateInvoice } from '@/app/ui/invoices/buttons';
-import Pagination from '@/app/ui/invoices/pagination';
-import Table from '@/app/ui/invoices/table';
-import Search from '@/app/ui/search';
-import { InvoicesTableSkeleton } from '@/app/ui/skeletons';
+import { fetchInvoicesPages } from "@/app/lib/data";
+import { lusitana } from "@/app/ui/fonts";
+import { CreateInvoice } from "@/app/ui/invoices/buttons";
+import Pagination from "@/app/ui/invoices/pagination";
+import Table from "@/app/ui/invoices/table";
+import Search from "@/app/ui/search";
+import { InvoicesTableSkeleton } from "@/app/ui/skeletons";
 
-import type { Metadata } from 'next';
-import { Suspense } from 'react';
+import type { Metadata } from "next";
+import { Suspense } from "react";
+import Tabs from "@/app/ui/invoices/tabs";
 
 export const metadata: Metadata = {
-  title: 'Invoices',
+  title: "Invoices",
 };
 
 export default async function Page({
@@ -21,7 +22,7 @@ export default async function Page({
     page?: string;
   };
 }) {
-  const query = searchParams?.query || '';
+  const query = searchParams?.query || "";
   const currentPage = Number(searchParams?.page) || 1; // What if searchParams?.page == 0?
 
   const totalPages = await fetchInvoicesPages(query);
@@ -35,6 +36,7 @@ export default async function Page({
         <Search placeholder="Search invoices..." />
         <CreateInvoice />
       </div>
+      <Tabs />
       <Suspense key={query + currentPage} fallback={<InvoicesTableSkeleton />}>
         <Table query={query} currentPage={currentPage} />
       </Suspense>

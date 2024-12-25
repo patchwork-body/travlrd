@@ -9,7 +9,6 @@
   "dependencies": {
     "@heroicons/react": "^2.1.5",
     "@radix-ui/react-dropdown-menu": "^2.1.4",
-    "@radix-ui/react-select": "^2.1.4",
     "@tailwindcss/forms": "^0.5.9",
     "@trigger.dev/sdk": "^3.3.7",
     "@vercel/postgres": "^0.8.0",

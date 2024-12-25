@@ -1,10 +1,8 @@
-import Image from 'next/image';
-import { UpdateInvoice, DeleteInvoice } from '@/app/ui/invoices/buttons';
-import InvoiceStatus from '@/app/ui/invoices/status';
-import { formatDateToLocal, formatCurrency } from '@/app/lib/utils';
-import { fetchFilteredInvoices } from '@/app/lib/data';
-import { useCallback } from 'react';
-import { updateInvoiceStatus } from '@/app/lib/actions';
+import Image from "next/image";
+import { UpdateInvoice, DeleteInvoice } from "@/app/ui/invoices/buttons";
+import InvoiceStatus from "@/app/ui/invoices/status";
+import { formatDateToLocal, formatCurrency } from "@/app/lib/utils";
+import { fetchFilteredInvoices } from "@/app/lib/data";
 
 export default async function InvoicesTable({
   query,
@@ -14,8 +12,6 @@ export default async function InvoicesTable({
   currentPage: number;
 }) {
   const invoices = await fetchFilteredInvoices(query, currentPage);
-
-
 
   return (
     <div className="mt-6 flow-root">
@@ -115,7 +111,7 @@ export default async function InvoicesTable({
                     {formatDateToLocal(invoice.due_date)}
                   </td>
                   <td className="whitespace-nowrap px-3 py-3">
-                  <InvoiceStatus id={invoice.id} status={invoice.status} />
+                    <InvoiceStatus id={invoice.id} status={invoice.status} />
                   </td>
                   <td className="whitespace-nowrap py-3 pl-6 pr-3">
                     <div className="flex justify-end gap-3">
