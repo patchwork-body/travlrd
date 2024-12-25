@@ -40,7 +40,7 @@ function TabItem({
         isActive ? "bg-gray-300" : ""
       }`}
     >
-      <Link href={`/api/set-invoice-tab?${searchParams}`}>{children}</Link>
+      <Link prefetch={false} href={`/api/set-invoice-tab?${searchParams}`}>{children}</Link>
     </li>
   );
 }
