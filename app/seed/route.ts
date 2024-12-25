@@ -1,4 +1,4 @@
-import { db } from '@vercel/postgres';
+import { db, type QueryResult, type QueryResultRow } from '@vercel/postgres';
 import bcrypt from 'bcrypt';
 
 import { customers, invoices, revenue, users } from '../lib/placeholder-data';
@@ -38,6 +38,7 @@ async function seedInvoices() {
     CREATE TABLE IF NOT EXISTS invoices (
       id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
       customer_id UUID NOT NULL,
+      user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
       amount INT NOT NULL,
       status VARCHAR(255) NOT NULL,
       due_date DATE NOT NULL DEFAULT CURRENT_DATE + INTERVAL '14 days',
@@ -45,11 +46,67 @@ async function seedInvoices() {
     );
   `;
 
+  await client.sql`
+    CREATE TABLE IF NOT EXISTS invoice_logs (
+      id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+      invoice_id UUID NOT NULL REFERENCES invoices(id) ON DELETE CASCADE,
+      user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      status VARCHAR(255) NOT NULL,
+      date DATE NOT NULL
+    );
+  `;
+
+  await client.sql`
+    CREATE INDEX IF NOT EXISTS invoice_logs_invoice_id_index
+    ON invoice_logs (invoice_id);
+  `;
+
+  await client.sql`
+    CREATE INDEX IF NOT EXISTS invoice_logs_user_id_index
+    ON invoice_logs (user_id);
+  `;
+
+
+  await client.sql`
+    CREATE OR REPLACE FUNCTION log_invoice_status_change()
+    RETURNS TRIGGER AS $$
+    BEGIN
+      IF OLD.status IS DISTINCT FROM NEW.status THEN
+        INSERT INTO invoice_logs (invoice_id, status, date, user_id)
+        VALUES (NEW.id, NEW.status, CURRENT_DATE, NEW.user_id);
+      END IF;
+      RETURN NEW;
+    END;
+    $$ LANGUAGE plpgsql;
+  `;
+
+  await client.sql`
+    DROP TRIGGER IF EXISTS invoice_status_change_trigger ON invoices;
+  `;
+
+  await client.sql`
+    CREATE TRIGGER invoice_status_change_trigger
+    AFTER INSERT ON invoices
+    FOR EACH ROW
+    EXECUTE FUNCTION log_invoice_status_change();
+  `;
+
+  await client.sql`
+    DROP TRIGGER IF EXISTS invoice_status_change_trigger_update ON invoices;
+  `;
+
+  await client.sql`
+    CREATE TRIGGER invoice_status_change_trigger_update
+    AFTER UPDATE OF status ON invoices
+    FOR EACH ROW
+    EXECUTE FUNCTION log_invoice_status_change();
+  `;
+
   const insertedInvoices = await Promise.all(
     invoices.map(
       (invoice) => client.sql`
-        INSERT INTO invoices (customer_id, amount, status, date, due_date)
-        VALUES (${invoice.customer_id}, ${invoice.amount}, ${invoice.status}, ${invoice.date}, ${invoice.due_date})
+        INSERT INTO invoices (customer_id, amount, status, date, due_date, user_id)
+        VALUES (${invoice.customer_id}, ${invoice.amount}, ${invoice.status}, ${invoice.date}, ${invoice.due_date}, ${invoice.user_id})
         ON CONFLICT (id) DO NOTHING;
       `,
     ),
@@ -110,7 +167,9 @@ export async function GET() {
   //     'Uncomment this file and remove this line. You can delete this file when you are finished.',
   // });
   try {
-    // await client.sql`DROP TABLE IF EXISTS users, invoices, customers, revenue`;
+    // await client.sql`DROP SCHEMA public CASCADE;
+    // CREATE SCHEMA public;
+    // `;
 
     await client.sql`BEGIN`;
     await seedUsers();

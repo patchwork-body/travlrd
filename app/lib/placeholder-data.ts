@@ -55,6 +55,7 @@ const invoices = [
     status: 'pending',
     date: '2022-12-06',
     due_date: '2022-12-20',
+    user_id: '410544b2-4001-4271-9855-fec4b6a6442a',
   },
   {
     customer_id: customers[1].id,
@@ -62,6 +63,7 @@ const invoices = [
     status: 'pending',
     date: '2022-11-14',
     due_date: '2022-11-28',
+    user_id: '410544b2-4001-4271-9855-fec4b6a6442a',
   },
   {
     customer_id: customers[4].id,
@@ -69,6 +71,7 @@ const invoices = [
     status: 'paid',
     date: '2022-10-29',
     due_date: '2022-11-12',
+    user_id: '410544b2-4001-4271-9855-fec4b6a6442a',
   },
   {
     customer_id: customers[3].id,
@@ -76,6 +79,7 @@ const invoices = [
     status: 'paid',
     date: '2023-09-10',
     due_date: '2023-09-24',
+    user_id: '410544b2-4001-4271-9855-fec4b6a6442a',
   },
   {
     customer_id: customers[5].id,
@@ -83,6 +87,7 @@ const invoices = [
     status: 'pending',
     date: '2023-08-05',
     due_date: '2023-08-19',
+    user_id: '410544b2-4001-4271-9855-fec4b6a6442a',
   },
   {
     customer_id: customers[2].id,
@@ -90,6 +95,7 @@ const invoices = [
     status: 'pending',
     date: '2023-07-16',
     due_date: '2023-07-30',
+    user_id: '410544b2-4001-4271-9855-fec4b6a6442a',
   },
   {
     customer_id: customers[0].id,
@@ -97,6 +103,7 @@ const invoices = [
     status: 'pending',
     date: '2023-06-27',
     due_date: '2023-07-11',
+    user_id: '410544b2-4001-4271-9855-fec4b6a6442a',
   },
   {
     customer_id: customers[3].id,
@@ -104,6 +111,7 @@ const invoices = [
     status: 'paid',
     date: '2023-06-09',
     due_date: '2023-06-23',
+    user_id: '410544b2-4001-4271-9855-fec4b6a6442a',
   },
   {
     customer_id: customers[4].id,
@@ -111,6 +119,7 @@ const invoices = [
     status: 'paid',
     date: '2023-06-17',
     due_date: '2023-07-01',
+    user_id: '410544b2-4001-4271-9855-fec4b6a6442a',
   },
   {
     customer_id: customers[5].id,
@@ -118,6 +127,7 @@ const invoices = [
     status: 'paid',
     date: '2023-06-07',
     due_date: '2023-06-21',
+    user_id: '410544b2-4001-4271-9855-fec4b6a6442a',
   },
   {
     customer_id: customers[1].id,
@@ -125,6 +135,7 @@ const invoices = [
     status: 'paid',
     date: '2023-08-19',
     due_date: '2023-09-02',
+    user_id: '410544b2-4001-4271-9855-fec4b6a6442a',
   },
   {
     customer_id: customers[5].id,
@@ -132,6 +143,7 @@ const invoices = [
     status: 'paid',
     date: '2023-06-03',
     due_date: '2023-06-17',
+    user_id: '410544b2-4001-4271-9855-fec4b6a6442a',
   },
   {
     customer_id: customers[2].id,
@@ -139,6 +151,7 @@ const invoices = [
     status: 'paid',
     date: '2022-06-05',
     due_date: '2022-06-19',
+    user_id: '410544b2-4001-4271-9855-fec4b6a6442a',
   },
 ];
 

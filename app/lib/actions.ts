@@ -4,7 +4,7 @@ import { z } from 'zod';
 import { sql } from '@vercel/postgres';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
-import { signIn } from '@/auth';
+import { auth, signIn } from '@/auth';
 import { AuthError } from 'next-auth';
 
 const FormSchema = z.object({
@@ -34,6 +34,15 @@ export type State = {
 };
 
 export async function createInvoice(prevState: State, formData: FormData) {
+  // Retrieve session
+  const session = await auth();
+
+  if (!session || !session.user) {
+    return {
+      message: 'Unauthorized. Failed to Create Invoice.',
+    };
+  }
+
   // Validate form fields using Zod
   const validatedFields = CreateInvoice.safeParse({
     customerId: formData.get('customerId'),
@@ -57,8 +66,8 @@ export async function createInvoice(prevState: State, formData: FormData) {
   // Insert data into the database
   try {
     await sql`
-      INSERT INTO invoices (customer_id, amount, status, date)
-      VALUES (${customerId}, ${amountInCents}, ${status}, ${date})
+      INSERT INTO invoices (customer_id, amount, status, date, user_id)
+      VALUES (${customerId}, ${amountInCents}, ${status}, ${date} ${session.user.id})
     `;
   } catch (error) {
     // If a database error occurs, return a more specific error.

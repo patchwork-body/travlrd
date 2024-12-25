@@ -4,6 +4,7 @@ import type {
   CustomerField,
   CustomersTableType,
   InvoiceForm,
+  InvoiceLog,
   InvoicesTable,
   LatestInvoiceRaw,
   Revenue,
@@ -166,6 +167,28 @@ export async function fetchInvoiceById(id: string) {
   } catch (error) {
     console.error('Database Error:', error);
     throw new Error('Failed to fetch invoice.');
+  }
+}
+
+export async function fetchInvoiceLogsById(id: string) {
+  try {
+    const data = await sql<InvoiceLog>`
+      SELECT
+        logs.id,
+        logs.invoice_id,
+        logs.date,
+        logs.status,
+        users.email
+      FROM invoice_logs AS logs
+      JOIN users ON logs.user_id = users.id
+      WHERE logs.invoice_id = ${id}
+      ORDER BY logs.date DESC
+    `;
+
+    return data.rows;
+  } catch (error) {
+    console.error('Database Error:', error);
+    throw new Error('Failed to fetch invoice logs.');
   }
 }
 
