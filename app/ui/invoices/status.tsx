@@ -1,57 +1,58 @@
+'use client';
+
+import { updateInvoiceStatus } from '@/app/lib/actions';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Select, SelectContent, SelectItem, SelectValue } from '@/components/ui/select';
-import { CheckIcon, ClockIcon } from '@heroicons/react/24/outline';
+import { CheckIcon, ClockIcon, XCircleIcon } from '@heroicons/react/24/outline';
 import { SelectTrigger } from '@radix-ui/react-select';
 import clsx from 'clsx';
+import { useCallback } from 'react';
 
-const availableStatuses = ['paid', 'pending', 'overdue', 'canceled'];
+const availableStatuses = ['paid', 'pending', 'overdue', 'canceled'] as const;
 
-export default function InvoiceStatus({ status }: { status: string }) {
+const statusToIcon  = {
+  pending: <ClockIcon className="w-4" />,
+  paid: <CheckIcon className="w-4" />,
+  overdue: <ClockIcon className="w-4" />,
+  canceled: <XCircleIcon className="w-4" />,
+};
+
+
+export default function InvoiceStatus({ id, status }: { id: string, status: string }) {
   const statusesToDisplay = availableStatuses.filter((availableStatus) => {
     return availableStatus !== status;
   });
 
+  const changeInvoiceStatus = useCallback(async (nextStatus: string) => {
+    await updateInvoiceStatus(id, nextStatus);
+  }, [id]);
+
   return (
-    <Select value={status}>
-      <SelectTrigger>
-        <SelectValue>
-          <span
-            className={clsx(
-              'inline-flex items-center rounded-full px-2 py-1 text-xs',
-              {
-                'bg-gray-100 text-gray-500': status === 'pending',
-                'bg-green-500 text-white': status === 'paid',
-                'bg-orange-500 text-white': status === 'overdue',
-              },
-            )}
-          >
-            {status === 'overdue' ? (
-              <>
-                Overdue
-                <ClockIcon className="ml-1 w-4 text-white" />
-              </>
-            ) : null}
-            {status === 'pending' ? (
-              <>
-                Pending
-                <ClockIcon className="ml-1 w-4 text-gray-500" />
-              </>
-            ) : null}
-            {status === 'paid' ? (
-              <>
-                Paid
-                <CheckIcon className="ml-1 w-4 text-white" />
-              </>
-            ) : null}
-          </span>
-        </SelectValue>
-      </SelectTrigger>
-      <SelectContent>
+    <DropdownMenu>
+      <DropdownMenuTrigger>
+        <span
+          className={clsx(
+            'inline-flex gap-1 items-center rounded-full px-2 py-1 text-xs capitalize',
+            {
+              'bg-gray-100 text-gray-500': status === 'pending',
+              'bg-green-500 text-white': status === 'paid',
+              'bg-orange-500 text-white': status === 'overdue',
+              'bg-red-500 text-white': status === 'canceled',
+            },
+          )}
+        >
+          {status}
+          {statusToIcon[status as keyof typeof statusToIcon]}
+        </span>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent>
         {statusesToDisplay.map((statusToDisplay) => (
-          <SelectItem key={statusToDisplay} value={statusToDisplay}>
+          <DropdownMenuItem key={statusToDisplay} className="capitalize" onClick={changeInvoiceStatus.bind(null, statusToDisplay)}>
+            {statusToIcon[statusToDisplay]}
             {statusToDisplay}
-          </SelectItem>
+          </DropdownMenuItem>
         ))}
-      </SelectContent>
-    </Select>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }
