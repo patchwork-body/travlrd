@@ -96,4 +96,5 @@ export type InvoiceLog = {
   date: string;
   status: InvoiceStatus;
   email: string;
+  restorable: boolean;
 };

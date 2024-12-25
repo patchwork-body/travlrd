@@ -116,15 +116,39 @@ export async function updateInvoice(
   redirect('/dashboard/invoices');
 }
 
-export async function updateInvoiceStatus(id: string, status: string) {
+export async function updateInvoiceStatus(id: string, status: string, restorable = true) {
+  const session = await auth();
+
+  if (!session || !session.user) {
+    return {
+      message: 'Unauthorized. Failed to Create Invoice.',
+    };
+  }
+
   try {
-    await sql`
+    const invoice = await sql<{ id: string }>`
       UPDATE invoices
       SET status = ${status}
       WHERE id = ${id}
+      RETURNING id
     `;
 
+    if (!restorable) {
+      const invoiceId = invoice.rows[0].id;
+
+      await sql`
+        UPDATE invoice_logs
+        SET restorable = false
+        WHERE id = (
+          SELECT id FROM invoice_logs WHERE invoice_id = ${invoiceId}
+          ORDER BY date ASC
+          LIMIT 1
+        )
+      `;
+    }
+
     revalidatePath('/dashboard/invoices');
+    revalidatePath(`/dashboard/invoices/${id}/edit`);
     return { message: 'Updated Invoice Status' };
   } catch (error) {
     console.error(error);
@@ -171,6 +195,20 @@ export async function markInvoicesAsOverdue() {
       WHERE status = 'pending' AND due_date < NOW()
     `;
   } catch (error) {
-    return { message: 'Database Error: Failed to mark invoices as overdue.', error };
+    console.error(error);
+    return { message: 'Database Error: Failed to mark invoices as overdue.' };
+  }
+}
+
+export async function markInvoiceLogAsNonRestorable(id: string) {
+  try {
+    await sql`
+      UPDATE invoice_logs
+      SET restorable = false
+      WHERE id = ${id}
+    `;
+  } catch (error) {
+    console.error(error);
+    return { message: 'Database Error: Failed to mark invoice log as non-restorable.' };
   }
 }

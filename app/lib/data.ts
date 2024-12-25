@@ -178,6 +178,7 @@ export async function fetchInvoiceLogsById(id: string) {
         logs.invoice_id,
         logs.date,
         logs.status,
+        logs.restorable,
         users.email
       FROM invoice_logs AS logs
       JOIN users ON logs.user_id = users.id

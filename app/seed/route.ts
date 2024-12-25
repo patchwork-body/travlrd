@@ -52,6 +52,7 @@ async function seedInvoices() {
       invoice_id UUID NOT NULL REFERENCES invoices(id) ON DELETE CASCADE,
       user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
       status VARCHAR(255) NOT NULL,
+      restorable BOOLEAN DEFAULT TRUE,
       date DATE NOT NULL
     );
   `;
