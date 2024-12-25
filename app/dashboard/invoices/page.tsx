@@ -5,6 +5,7 @@ import Pagination from "@/app/ui/invoices/pagination";
 import Table from "@/app/ui/invoices/table";
 import Search from "@/app/ui/search";
 import { InvoicesTableSkeleton } from "@/app/ui/skeletons";
+import { cookies } from "next/headers";
 
 import type { Metadata } from "next";
 import { Suspense } from "react";
@@ -22,7 +23,9 @@ export default async function Page({
     page?: string;
   };
 }) {
-  const query = searchParams?.query || "";
+  const cookieStore = cookies();
+  const storedTab = cookieStore.get("selectedTab")?.value || "";
+  const query = searchParams?.query || storedTab;
   const currentPage = Number(searchParams?.page) || 1; // What if searchParams?.page == 0?
 
   const totalPages = await fetchInvoicesPages(query);
@@ -36,7 +39,7 @@ export default async function Page({
         <Search placeholder="Search invoices..." />
         <CreateInvoice />
       </div>
-      <Tabs />
+      <Tabs currentTab={query} />
       <Suspense key={query + currentPage} fallback={<InvoicesTableSkeleton />}>
         <Table query={query} currentPage={currentPage} />
       </Suspense>
