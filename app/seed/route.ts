@@ -2,6 +2,7 @@ import { db } from '@vercel/postgres';
 import bcrypt from 'bcrypt';
 
 import { customers, invoices, revenue, users } from '../lib/placeholder-data';
+import { markInvoicesAsOverdue } from '../lib/actions';
 
 const client = await db.connect();
 
@@ -39,6 +40,7 @@ async function seedInvoices() {
       customer_id UUID NOT NULL,
       amount INT NOT NULL,
       status VARCHAR(255) NOT NULL,
+      due_date DATE NOT NULL DEFAULT CURRENT_DATE + INTERVAL '14 days',
       date DATE NOT NULL
     );
   `;
@@ -46,8 +48,8 @@ async function seedInvoices() {
   const insertedInvoices = await Promise.all(
     invoices.map(
       (invoice) => client.sql`
-        INSERT INTO invoices (customer_id, amount, status, date)
-        VALUES (${invoice.customer_id}, ${invoice.amount}, ${invoice.status}, ${invoice.date})
+        INSERT INTO invoices (customer_id, amount, status, date, due_date)
+        VALUES (${invoice.customer_id}, ${invoice.amount}, ${invoice.status}, ${invoice.date}, ${invoice.due_date})
         ON CONFLICT (id) DO NOTHING;
       `,
     ),
@@ -108,12 +110,16 @@ export async function GET() {
   //     'Uncomment this file and remove this line. You can delete this file when you are finished.',
   // });
   try {
+    // await client.sql`DROP TABLE IF EXISTS users, invoices, customers, revenue`;
+
     await client.sql`BEGIN`;
     await seedUsers();
     await seedCustomers();
     await seedInvoices();
     await seedRevenue();
     await client.sql`COMMIT`;
+
+    await markInvoicesAsOverdue();
 
     return Response.json({ message: 'Database seeded successfully' });
   } catch (error) {

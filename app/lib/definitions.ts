@@ -51,8 +51,9 @@ export type InvoicesTable = {
   email: string;
   image_url: string;
   date: string;
+  due_date: string;
   amount: number;
-  status: 'pending' | 'paid';
+  status: 'pending' | 'paid' | 'overdue';
 };
 
 export type CustomersTableType = {

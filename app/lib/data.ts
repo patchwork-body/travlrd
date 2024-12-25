@@ -1,5 +1,6 @@
 import { sql } from '@vercel/postgres';
-import {
+
+import type {
   CustomerField,
   CustomersTableType,
   InvoiceForm,
@@ -96,6 +97,7 @@ export async function fetchFilteredInvoices(
         invoices.id,
         invoices.amount,
         invoices.date,
+        invoices.due_date,
         invoices.status,
         customers.name,
         customers.email,
@@ -128,6 +130,7 @@ export async function fetchInvoicesPages(query: string) {
       customers.name ILIKE ${`%${query}%`} OR
       customers.email ILIKE ${`%${query}%`} OR
       invoices.amount::text ILIKE ${`%${query}%`} OR
+      invoices.due_date::text ILIKE ${`%${query}%`} OR
       invoices.date::text ILIKE ${`%${query}%`} OR
       invoices.status ILIKE ${`%${query}%`}
   `;
@@ -147,7 +150,8 @@ export async function fetchInvoiceById(id: string) {
         invoices.id,
         invoices.customer_id,
         invoices.amount,
-        invoices.status
+        invoices.status,
+        invoices.due_date
       FROM invoices
       WHERE invoices.id = ${id};
     `;

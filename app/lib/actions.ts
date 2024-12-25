@@ -137,3 +137,15 @@ export async function authenticate(
     throw error;
   }
 }
+
+export async function markInvoicesAsOverdue() {
+  try {
+    await sql`
+      UPDATE invoices
+      SET status = 'overdue'
+      WHERE status = 'pending' AND due_date < NOW()
+    `;
+  } catch (error) {
+    return { message: 'Database Error: Failed to mark invoices as overdue.', error };
+  }
+}
