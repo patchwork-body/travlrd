@@ -6,7 +6,7 @@ export async function GET(request: Request) {
   const tab = url.searchParams.get("tab");
 
   const cookieStore = cookies();
-  cookieStore.set("selectedTab", tab ?? "", { path: "/dashboard/invoices", secure: process.env.NODE_ENV === 'production', sameSite: "strict" });
+  cookieStore.set("selectedTab", tab ?? "", { path: "/dashboard/invoices", secure: process.env.NODE_ENV === 'production', sameSite: "lax" });
   const searchParams = new URLSearchParams({ query: tab ?? "" });
   return NextResponse.redirect(new URL(`/dashboard/invoices?${searchParams}`, request.url));
 }

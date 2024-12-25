@@ -32,7 +32,7 @@ function TabItem({
   children: ReactNode;
   isActive: boolean;
 }) {
-  const searchParams = new URLSearchParams(tab ? { tab } : undefined).toString();
+  const searchParams = new URLSearchParams(tab ? { tab } : undefined);
 
   return (
     <li
