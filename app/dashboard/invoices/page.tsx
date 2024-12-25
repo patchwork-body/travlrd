@@ -25,7 +25,7 @@ export default async function Page({
 }) {
   const cookieStore = cookies();
   const storedTab = cookieStore.get("selectedTab")?.value ?? "";
-  const query = searchParams?.query ?? storedTab;
+  const query = storedTab ?? searchParams?.query ?? "";
   const currentPage = Number(searchParams?.page) || 1; // What if searchParams?.page == 0?
 
   const totalPages = await fetchInvoicesPages(query);
