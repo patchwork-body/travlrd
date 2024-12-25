@@ -19,13 +19,13 @@ export async function InvoiceLogs({ id }: { id: string }) {
               <p className="text-sm text-gray-600">New status: {log.status}</p>
               <p className="text-sm text-gray-600">Email: {log.email}</p>
 
-              {index === logs.length - 1 && index !== 0 && log.restorable && (
+              {index === 0 && logs.length > 0 && log.restorable && (
                 <>
                   <hr className="my-2 border-gray-200" />
 
                   <RestoreInvoiceStatus
                     invoiceId={log.invoice_id}
-                    status={logs[index - 1].status}
+                    status={logs[1].status}
                   />
                 </>
               )}

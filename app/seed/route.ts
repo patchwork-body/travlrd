@@ -53,7 +53,7 @@ async function seedInvoices() {
       user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
       status VARCHAR(255) NOT NULL,
       restorable BOOLEAN DEFAULT TRUE,
-      date DATE NOT NULL
+      date TIMESTAMPTZ NOT NULL DEFAULT NOW()
     );
   `;
 
@@ -73,8 +73,8 @@ async function seedInvoices() {
     RETURNS TRIGGER AS $$
     BEGIN
       IF OLD.status IS DISTINCT FROM NEW.status THEN
-        INSERT INTO invoice_logs (invoice_id, status, date, user_id)
-        VALUES (NEW.id, NEW.status, CURRENT_DATE, NEW.user_id);
+        INSERT INTO invoice_logs (invoice_id, status, user_id)
+        VALUES (NEW.id, NEW.status, NEW.user_id);
       END IF;
       RETURN NEW;
     END;

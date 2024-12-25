@@ -143,7 +143,7 @@ export async function updateInvoiceStatus(id: string, status: string, restorable
         SET restorable = false
         WHERE id = (
           SELECT id FROM invoice_logs WHERE invoice_id = ${invoiceId}
-          ORDER BY date ASC
+          ORDER BY date DESC
           LIMIT 1
         )
       `;
